@@ -1,0 +1,6 @@
+{
+  "name": "IskolarZ",
+  "description": "A sleek, Black and Green GWA and Curriculum Checklist Tracker for UPM BSCS students.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
