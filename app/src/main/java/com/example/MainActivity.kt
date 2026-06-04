@@ -10,6 +10,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,6 +23,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -156,159 +159,373 @@ fun LaunchOnboardingScreen(
     var selectedStartYear by remember(profile) { mutableStateOf(profile?.startYear ?: startSemesters.first()) }
     var isYearDropdownExpanded by remember { mutableStateOf(false) }
 
-    Column(
+    val scrollState = rememberScrollState()
+
+    // Elegant gradient background defining a cosmic dark cyber aesthetic
+    val bgGradient = Brush.verticalGradient(
+        colors = listOf(
+            Color(0xFF030704), // Dark jade noir
+            Color(0xFF090B09), // Carbon black
+            Color(0xFF0E130F)  // Emerald outline dark tint
+        )
+    )
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp)
-            .testTag("onboarding_screen"),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(bgGradient)
+            .windowInsetsPadding(WindowInsets.statusBars)
     ) {
-        Icon(
-            imageVector = Icons.Default.School,
-            contentDescription = "IskolarZ Logo",
-            tint = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.size(80.dp)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "IskolarZ",
-            fontSize = 38.sp,
-            fontWeight = FontWeight.Black,
-            fontFamily = FontFamily.Monospace,
-            color = MaterialTheme.colorScheme.secondary
-        )
-        Text(
-            text = "University of the Philippines Manila • BS Computer Science Curriculum Checklist",
-            fontSize = 11.sp,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
-            textAlign = TextAlign.Center
-        )
-        
-        Spacer(modifier = Modifier.height(40.dp))
-
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(horizontal = 28.dp, vertical = 32.dp)
+                .testTag("onboarding_screen"),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(modifier = Modifier.padding(20.dp)) {
-                Text(
-                    text = if (profile != null) "PROFILE & ACADEMICS:" else "TELL US ABOUT YOURSELF",
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily.Monospace
-                )
-                Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-                OutlinedTextField(
-                    value = nickname,
-                    onValueChange = { nickname = it },
-                    label = { Text("Nickname / Alias") },
-                    singleLine = true,
-                    enabled = profile == null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .testTag("nickname_input"),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
-                        focusedLabelColor = MaterialTheme.colorScheme.secondary
+            // Beautiful glowing logo
+            Box(
+                modifier = Modifier
+                    .size(110.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f),
+                        shape = RoundedCornerShape(28.dp)
                     )
+                    .border(
+                        width = 1.5.dp,
+                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.6f),
+                        shape = RoundedCornerShape(28.dp)
+                    )
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                // Secondary internal glowing outline ring
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(22.dp)
+                        )
                 )
+                Icon(
+                    imageVector = Icons.Default.School,
+                    contentDescription = "IskolarZ Logo",
+                    tint = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.size(52.dp)
+                )
+            }
 
-                Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-                Text("Academic Start Year", fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
-                Spacer(modifier = Modifier.height(4.dp))
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    OutlinedButton(
-                        onClick = { isYearDropdownExpanded = true },
-                        enabled = profile == null,
-                        modifier = Modifier.fillMaxWidth(),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+            // Beautiful terminal-inspired stylized typography
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Iskolar",
+                    fontSize = 38.sp,
+                    fontWeight = FontWeight.Black,
+                    fontFamily = FontFamily.Monospace,
+                    color = Color.White,
+                    letterSpacing = 1.sp
+                )
+                Text(
+                    text = "Z",
+                    fontSize = 38.sp,
+                    fontWeight = FontWeight.Black,
+                    fontFamily = FontFamily.Monospace,
+                    color = MaterialTheme.colorScheme.secondary,
+                    letterSpacing = 1.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Subtitle badge
+            Surface(
+                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f),
+                shape = RoundedCornerShape(100.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary.copy(alpha = 0.25f)),
+                modifier = Modifier.padding(horizontal = 4.dp)
+            ) {
+                Text(
+                    text = "UP Manila • BSCS Tracker",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Monospace,
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            Spacer(modifier = Modifier.height(36.dp))
+
+            // Form container
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)),
+                shape = RoundedCornerShape(20.dp)
+            ) {
+                Column(modifier = Modifier.padding(24.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(text = selectedStartYear, color = if (profile != null) MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f) else MaterialTheme.colorScheme.onBackground)
-                        Spacer(modifier = Modifier.weight(1f))
-                        Icon(Icons.Default.ArrowDropDown, contentDescription = "dropdown", tint = MaterialTheme.colorScheme.secondary)
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = if (profile != null) "PROFILE & ACADEMICS" else "TELL US ABOUT YOURSELF",
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 11.sp,
+                            fontFamily = FontFamily.Monospace,
+                            letterSpacing = 0.5.sp
+                        )
                     }
-                    if (profile == null) {
-                        DropdownMenu(
-                            expanded = isYearDropdownExpanded,
-                            onDismissRequest = { isYearDropdownExpanded = false }
-                        ) {
-                            startSemesters.forEach { sem ->
-                                DropdownMenuItem(
-                                    text = { Text(sem) },
-                                    onClick = {
-                                        selectedStartYear = sem
-                                        isYearDropdownExpanded = false
-                                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // Nickname input field
+                    OutlinedTextField(
+                        value = nickname,
+                        onValueChange = { nickname = it },
+                        label = { Text("Nickname / Alias", fontFamily = FontFamily.Monospace) },
+                        singleLine = true,
+                        enabled = profile == null,
+                        placeholder = { Text("Enter your name...", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Face,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.secondary.copy(alpha = 0.6f),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("nickname_input"),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            focusedBorderColor = MaterialTheme.colorScheme.secondary,
+                            focusedLabelColor = MaterialTheme.colorScheme.secondary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                            disabledBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                            disabledLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Text(
+                        text = "Academic Start Year",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Monospace,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    color = if (profile != null) MaterialTheme.colorScheme.background.copy(alpha = 0.5f) else MaterialTheme.colorScheme.background,
+                                    shape = RoundedCornerShape(12.dp)
                                 )
+                                .border(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.outline.copy(alpha = if (profile != null) 0.5f else 1.0f),
+                                    shape = RoundedCornerShape(12.dp)
+                                )
+                                .clickable(enabled = profile == null) { isYearDropdownExpanded = true }
+                                .padding(horizontal = 16.dp, vertical = 14.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.DateRange,
+                                contentDescription = "Academic Start Year",
+                                tint = if (profile != null) MaterialTheme.colorScheme.secondary.copy(alpha = 0.4f) else MaterialTheme.colorScheme.secondary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = selectedStartYear,
+                                color = if (profile != null) MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f) else MaterialTheme.colorScheme.onBackground,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f)
+                            )
+                            if (profile == null) {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowDropDown,
+                                    contentDescription = "dropdown arrow",
+                                    tint = MaterialTheme.colorScheme.secondary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+                        }
+
+                        if (profile == null) {
+                            DropdownMenu(
+                                expanded = isYearDropdownExpanded,
+                                onDismissRequest = { isYearDropdownExpanded = false },
+                                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
+                            ) {
+                                startSemesters.forEach { sem ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                                Icon(
+                                                    imageVector = Icons.Default.DateRange,
+                                                    contentDescription = null,
+                                                    tint = if (sem == selectedStartYear) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                                                    modifier = Modifier.size(16.dp)
+                                                )
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                Text(
+                                                    text = sem,
+                                                    fontWeight = if (sem == selectedStartYear) FontWeight.Bold else FontWeight.Normal,
+                                                    color = if (sem == selectedStartYear) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurface
+                                                )
+                                            }
+                                        },
+                                        onClick = {
+                                            selectedStartYear = sem
+                                            isYearDropdownExpanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Text(
+                        text = if (profile != null) "Track Specialization" else "Choose Your Track Specialization",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.Monospace,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        listOf(
+                            "Health Informatics" to Icons.Default.MedicalServices,
+                            "Statistical Computing" to Icons.Default.BarChart
+                        ).forEach { (track, icon) ->
+                            val selected = selectedTrack == track
+
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .background(
+                                        color = if (selected) MaterialTheme.colorScheme.secondary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.background,
+                                        shape = RoundedCornerShape(12.dp)
+                                    )
+                                    .border(
+                                        width = 1.5.dp,
+                                        color = if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.outline,
+                                        shape = RoundedCornerShape(12.dp)
+                                    )
+                                    .clickable(enabled = profile == null) { selectedTrack = track }
+                                    .padding(horizontal = 12.dp, vertical = 14.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = icon,
+                                        contentDescription = track,
+                                        tint = if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Text(
+                                        text = track,
+                                        fontSize = 11.sp,
+                                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                                        color = if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                                        textAlign = TextAlign.Center,
+                                        maxLines = 2,
+                                        lineHeight = 14.sp
+                                    )
+                                }
                             }
                         }
                     }
                 }
+            }
 
-                Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(36.dp))
 
-                Text(
-                    text = if (profile != null) "Track Specialization" else "Choose Your Track Specialization",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    listOf("Health Informatics", "Statistical Computing").forEach { track ->
-                        val selected = selectedTrack == track
-                        Button(
-                            onClick = { selectedTrack = track },
-                            enabled = profile == null,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
-                                contentColor = if (selected) Color.Black else MaterialTheme.colorScheme.onBackground,
-                                disabledContainerColor = if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else MaterialTheme.colorScheme.outline.copy(alpha = 0.1f),
-                                disabledContentColor = if (selected) Color.Black.copy(alpha = 0.5f) else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
-                            ),
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(8.dp),
-                            border = if (!selected) BorderStroke(1.dp, MaterialTheme.colorScheme.outline) else null
-                        ) {
-                            Text(text = track, fontSize = 12.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+            // Enter dashboard action button
+            Button(
+                onClick = {
+                    if (profile != null) {
+                        onEnterDashboard()
+                    } else {
+                        if (nickname.trim().isNotBlank()) {
+                            onSaveProfile(nickname, selectedTrack, selectedStartYear)
                         }
                     }
+                },
+                enabled = profile != null || nickname.trim().isNotBlank(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    disabledContainerColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                    contentColor = Color.Black
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(54.dp)
+                    .testTag("submit_button"),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "ENTER DASHBOARD",
+                        fontWeight = FontWeight.Black,
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 14.sp,
+                        letterSpacing = 0.5.sp
+                    )
+                    Icon(
+                        imageVector = Icons.Default.ArrowForward,
+                        contentDescription = "enter icon",
+                        modifier = Modifier.size(16.dp)
+                    )
                 }
             }
-        }
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Button(
-            onClick = {
-                if (profile != null) {
-                    onEnterDashboard()
-                } else {
-                    if (nickname.trim().isNotBlank()) {
-                        onSaveProfile(nickname, selectedTrack, selectedStartYear)
-                    }
-                }
-            },
-            enabled = profile != null || nickname.trim().isNotBlank(),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                disabledContainerColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                contentColor = Color.Black
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .testTag("submit_button"),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text("ENTER DASHBOARD", fontWeight = FontWeight.Black, fontFamily = FontFamily.Monospace)
+            
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
@@ -328,9 +545,12 @@ fun DashboardTab(
     var gradeToDelete by remember { mutableStateOf<GradeRecordEntity?>(null) }
     var gradeToEdit by remember { mutableStateOf<GradeRecordEntity?>(null) }
 
+    val dashboardScrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(dashboardScrollState)
             .padding(16.dp)
     ) {
         // Welcome and Edit button
@@ -538,7 +758,6 @@ fun DashboardTab(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
                     .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp))
                     .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
                     .padding(24.dp),
@@ -558,13 +777,11 @@ fun DashboardTab(
                 }
             }
         } else {
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
+            Column(
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(grades.take(5)) { grade ->
+                grades.take(3).forEach { grade ->
                     GradeItemRow(
                         gradeRecord = grade,
                         onEdit = { gradeToEdit = grade },
@@ -573,7 +790,7 @@ fun DashboardTab(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = { isAddGradeDialogShown = true },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary, contentColor = Color.Black),
@@ -2224,7 +2441,7 @@ fun CurriculumTab(
                 isSearchFocused = true
             },
             placeholder = { Text("Search Course Code or Name...") },
-            label = { Text("Search Curriculum Subject") },
+            label = { Text("Search Course Code or Name...") },
             singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
@@ -2329,7 +2546,15 @@ fun CurriculumTab(
                                     course.category == "GE" -> "GE"
                                     course.category == "PE" -> "PE"
                                     course.category == "NSTP" -> "NSTP"
-                                    course.code.startsWith("CMSC Elective") -> "ELECTIVE"
+                                    course.code.uppercase().trim().let { c ->
+                                        c.startsWith("CMSC ELECTIVE") ||
+                                        c.startsWith("ELECTIVE") ||
+                                        c in setOf(
+                                            "CMSC 143", "CMSC 155", "CMSC 170", "CMSC 172", "CMSC 173", "CMSC 175", "CMSC 180", "CMSC 181", "CMSC 191",
+                                            "HI 193.2", "STAT 186", "STAT 187", "STAT COMP 181.1", "STAT COMP 181.2", "STAT COMP 185",
+                                            "MATH 126", "MATH 162", "MATH 164", "MATH 165", "MATH 180.1", "MATH 180.2", "MATH 181"
+                                        )
+                                    } -> "ELECTIVE"
                                     else -> null
                                 }
                                 if (badgeLabel != null) {
@@ -2398,6 +2623,23 @@ fun CurriculumTab(
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = course.prerequisites,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = "POSTREQUISITES",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = course.postrequisites,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
@@ -2542,7 +2784,15 @@ fun CurriculumTab(
                                             val cCode = course.code.uppercase().trim()
                                             if (cCode.contains("NSTP") || cCode.contains("CWTS") || cCode.contains("LTS")) "NSTP" else "PE"
                                         }
-                                        course.code.startsWith("CMSC Elective") -> "ELECTIVE"
+                                        course.code.uppercase().trim().let { c ->
+                                            c.startsWith("CMSC ELECTIVE") ||
+                                            c.startsWith("ELECTIVE") ||
+                                            c in setOf(
+                                                "CMSC 143", "CMSC 155", "CMSC 170", "CMSC 172", "CMSC 173", "CMSC 175", "CMSC 180", "CMSC 181", "CMSC 191",
+                                                "HI 193.2", "STAT 186", "STAT 187", "STAT COMP 181.1", "STAT COMP 181.2", "STAT COMP 185",
+                                                "MATH 126", "MATH 162", "MATH 164", "MATH 165", "MATH 180.1", "MATH 180.2", "MATH 181"
+                                            )
+                                        } -> "ELECTIVE"
                                         else -> null
                                     }
 
@@ -2624,6 +2874,23 @@ fun CurriculumTab(
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Text(
                                         text = course.prerequisites,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                    )
+
+                                    Spacer(modifier = Modifier.height(10.dp))
+
+                                    Text(
+                                        text = "POSTREQUISITES",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 10.sp,
+                                        fontFamily = FontFamily.Monospace,
+                                        color = MaterialTheme.colorScheme.secondary
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = course.postrequisites,
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
